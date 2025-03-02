@@ -1,0 +1,28 @@
+{% extends 'sk_python_project/base.html' %}
+
+{% block content %}
+<main class="p-6">
+    <div class="mt-6">
+        <h1 class="text-2xl font-semibold text-gray-800">{{ topic.name }}</h1>
+        <p class="mt-2 text-lg text-gray-700">Topic: {{ topic }}</p>
+
+        <div class="mt-4">
+            <p class="font-semibold text-gray-800">Entries:</p>
+            <div class="mt-2">
+                <a href="{% url 'sk_python_project:new_entry' topic.id %}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add new entry</a>
+            </div>
+
+            <ul class="mt-4 space-y-4">
+                {% for entry in entries %}
+                    <li class="bg-white p-4 shadow-md rounded-lg">
+                        <p class="text-sm text-gray-500">{{ entry.date_added|date:'M d, Y H:i' }}</p>
+                        <p class="mt-2 text-gray-700">{{ entry.text|linebreaks }}</p>
+                    </li>
+                {% empty %}
+                    <li class="text-gray-500">There are no entries for this topic yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</main>
+{% endblock content %}

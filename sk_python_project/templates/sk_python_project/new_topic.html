@@ -1,0 +1,15 @@
+{% extends "sk_python_project/base.html" %}
+
+{% block content %}
+<main class="p-6">
+    <p class="mt-6 text-lg text-gray-700">This project helps you keep track of your learning, for any topic you're learning about.</p>
+
+    <p class="mt-6 text-lg font-semibold text-gray-800">Add a new topic:</p>
+
+    <form action="{% url 'sk_python_project:new_topic' %}" method='post' class="mt-4 bg-white p-4 shadow-md rounded-lg">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name="submit" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Topic</button>
+    </form>
+</main>
+{% endblock content %}

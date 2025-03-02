@@ -1,0 +1,16 @@
+{% extends "sk_python_project/base.html" %}
+
+{% block content %}
+<main class="p-6">
+    <p class="mt-6 text-lg font-semibold text-gray-800">
+        <a href="{% url 'sk_python_project:topic' topic.id %}" class="text-blue-600 hover:underline">{{ topic }}</a>
+    </p>
+
+    <p class="mt-4 text-gray-700">Add a new entry:</p>
+    <form action="{% url 'sk_python_project:new_entry' topic.id %}" method='post' class="mt-4 bg-white p-4 shadow-md rounded-lg">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name='submit' class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Entry</button>
+    </form>
+</main>
+{% endblock content %}

@@ -1,0 +1,30 @@
+{% extends "sk_python_project/base.html" %}
+
+{% block content %}
+<main class="p-6">
+    <h1 class="mt-6 text-2xl font-semibold text-gray-800">Topics</h1>
+
+    <ul class="mt-4 space-y-4">
+        {% for topic in topics %}
+            <li class="bg-white p-4 shadow-md rounded-lg flex justify-between items-center">
+                <a href="{% url 'sk_python_project:topic' topic.id %}" class="text-xl text-blue-600 hover:underline">{{ topic }}</a>
+                <div>
+                    <a href="{% url 'sk_python_project:new_entry' topic.id %}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add new entry</a>
+                </div>
+            </li>
+        {% empty %}
+            <li class="text-gray-500">No topics have been added yet.</li>
+        {% endfor %}
+    </ul>
+
+    <div class="mt-6">
+        <a href="{% url 'sk_python_project:new_topic' %}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add a new topic</a>
+    </div>
+
+    {% if topics %}
+        <p class="mt-4">
+            <a href="{% url 'sk_python_project:edit_entry' topics.0.id %}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Edit entry</a>
+        </p>
+    {% endif %}
+</main>
+{% endblock content %}

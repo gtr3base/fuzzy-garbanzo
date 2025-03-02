@@ -1,0 +1,11 @@
+{% extends "sk_python_project/base.html" %}
+
+{% block content %}
+<main class="p-6">
+    <div class="mt-6 p-6 bg-white shadow-md rounded-lg text-center">
+        <p class="text-2xl font-semibold text-gray-800">You have been logged out.</p>
+        <p class="mt-4 text-lg text-gray-600">Thank you for visiting!</p>
+        <a href="{% url 'sk_python_project:index' %}" class="mt-6 inline-block bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Go to Homepage</a>
+    </div>
+</main>
+{% endblock content %}
