@@ -1,0 +1,53 @@
+{% extends "sk_python_project/base.html" %}
+
+{% block content %}
+    <div class="container mx-auto px-4 py-6">
+        {% if topics %}
+            <ul class="flex flex-wrap gap-6">
+                {% for topic in topics %}
+                    <li class="bg-blue-500 text-white shadow-lg rounded-lg p-6 w-full sm:w-1/2 md:w-1/3">
+                        <h2 class="text-2xl font-semibold mb-4">{{ topic.text }}</h2>
+
+                        <div class="mt-4 space-y-4">
+                            <div class="flex justify-between items-center">
+                                <form method="POST" action="{% url 'sk_python_project:like_topic' topic.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        Like ({{ topic.like_set.count }})
+                                    </button>
+                                </form>
+
+                                <form method="POST" action="{% url 'sk_python_project:dislike_topic' topic.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500">
+                                        Dislike ({{ topic.dislike_set.count }})
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <h3 class="text-xl font-medium mb-2">Comments:</h3>
+                            <div class="space-y-4">
+                                {% for comment in topic.comment_set.all %}
+                                    <div class="bg-gray-100 p-4 rounded-lg">
+                                        <p class="font-semibold text-gray-800">{{ comment.user.username }}:</p>
+                                        <p class="text-gray-700">{{ comment.text }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <form method="POST" action="{% url 'sk_python_project:add_comment' topic.id %}" class="mt-4">
+                                {% csrf_token %}
+                                <textarea name="comment" placeholder="Add a comment..." class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"></textarea>
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full mt-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">Post Comment</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-center text-lg font-medium text-gray-700">No topics found.</p>
+        {% endif %}
+    </div>
+{% endblock content %}

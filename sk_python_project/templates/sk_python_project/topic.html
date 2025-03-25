@@ -14,10 +14,11 @@
 
             <ul class="mt-4 space-y-4">
                 {% for entry in entries %}
-                    <li class="bg-white p-4 shadow-md rounded-lg">
-                        <p class="text-sm text-gray-500">{{ entry.date_added|date:'M d, Y H:i' }}</p>
-                        <p class="mt-2 text-gray-700">{{ entry.text|linebreaks }}</p>
-                    </li>
+            <li class="bg-white p-4 shadow-md rounded-lg">
+                <p class="text-sm text-gray-500">{{ entry.date_added|date:'M d, Y H:i' }}</p>
+                <p class="text-sm text-gray-500 mt-2 ">{{ entry.text|linebreaks }}</p>
+                <a href="{% url 'sk_python_project:edit_entry' entry.id %}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 mt-4 inline-block">Edit entry</a>
+            </li>
                 {% empty %}
                     <li class="text-gray-500">There are no entries for this topic yet.</li>
                 {% endfor %}

@@ -9,7 +9,20 @@
             {% csrf_token %}
 
             <div class="mb-4">
-                {{ form.as_p }}
+                <label for="id_username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" name="username" id="id_username" class="w-full p-2 border border-gray-300 rounded-md" maxlength="150" required placeholder="Enter a username">
+                <p class="text-xs text-gray-500">Username should be 150 characters or fewer, and can include letters, digits, and @/./+/-/_.</p>
+            </div>
+
+            <div class="mb-4">
+                <label for="id_password1" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" name="password1" id="id_password1" class="w-full p-2 border border-gray-300 rounded-md" required placeholder="Create a password">
+                <p class="text-xs text-gray-500">Your password should be at least 8 characters and must contain a mix of letters and numbers.</p>
+            </div>
+
+            <div class="mb-4">
+                <label for="id_password2" class="block text-sm font-medium text-gray-700">Password Confirmation</label>
+                <input type="password" name="password2" id="id_password2" class="w-full p-2 border border-gray-300 rounded-md" required placeholder="Confirm your password">
             </div>
 
             <button type="submit" name="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Register</button>

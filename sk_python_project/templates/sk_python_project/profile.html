@@ -1,0 +1,36 @@
+{% extends "sk_python_project/base.html" %}
+
+{% block content %}
+<main class="p-6">
+    <h1 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">User Profile</h1>
+
+    <div class="mt-6 flex items-center space-x-4">
+        <div class="w-16 h-16 bg-blue-500 text-white text-2xl font-bold rounded-full flex items-center justify-center">
+            {{ user.username|slice:":1" }}
+        </div>
+
+        <div>
+            <h2 class="text-xl font-semibold text-black">{{ user.username }}</h2>
+            <p class="text-black">Joined on: {{ user.date_joined|date:"F j, Y" }}</p>
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Change Username</h2>
+        <form method="POST" class="mt-4">
+            {% csrf_token %}
+            {{ username_form.as_p }}
+            <button type="submit" name="change_username" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-4">Change Username</button>
+        </form>
+    </div>
+
+    <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Change Password</h2>
+        <form method="POST" class="mt-4">
+            {% csrf_token %}
+            {{ password_form.as_p }}
+            <button type="submit" name="change_password" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4">Change Password</button>
+        </form>
+    </div>
+</main>
+{% endblock content %}

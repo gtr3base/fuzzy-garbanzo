@@ -1,2 +1,13 @@
 {% extends "sk_python_project/base.html" %}
  {% block content %}
+<p><a href="{% url 'sk_python_project:topic' topic.id %}">{{ topic }}</a></p>
+
+ <p>Edit entry:</p>
+
+<form action="{% url 'sk_python_project:edit_entry' entry.id %}" method='post'>
+ {% csrf_token %}
+ {{ form.as_p }}
+<button name="submit" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 mt-4 inline-block">Save changes</button>
+ </form>
+
+ {% endblock content %}
