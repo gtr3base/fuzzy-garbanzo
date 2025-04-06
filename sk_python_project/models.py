@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
+
 
 class Topic(models.Model):
     text = models.CharField(max_length=200)
@@ -55,3 +57,25 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user} on {self.topic}"
+
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('like', 'Like'),
+        ('dislike', 'Dislike'),
+        ('comment', 'Comment'),
+    ]
+
+    recipient = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name='sent_notifications', on_delete=models.CASCADE)
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    topic = models.ForeignKey('Topic', on_delete=models.CASCADE, null=True, blank=True)
+    entry = models.ForeignKey('Entry', on_delete=models.CASCADE, null=True, blank=True)
+    read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.sender.username} {self.get_notification_type_display()} - {self.recipient.username}"

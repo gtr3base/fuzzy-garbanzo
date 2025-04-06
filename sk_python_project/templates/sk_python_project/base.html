@@ -6,43 +6,113 @@
     <title>Python Project</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            500: '#3B82F6',
+                            600: '#2563EB',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 </head>
 
-<body class="bg-gray-100 text-gray-800">
-    <nav class="bg-blue-600 text-white p-4 shadow-lg flex justify-between items-center">
-        <form action="{% url 'sk_python_project:all_topics' %}" method="GET" class="flex">
-            <input type="text" name="q" placeholder="Search topics..."
-                class="px-3 py-1 rounded-l border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black">
-            <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded-r hover:bg-blue-600">Search</button>
-        </form>
-        <div class="space-x-4">
-            <a href="{% url 'sk_python_project:index' %}" class="hover:underline">Main</a>
-            <a href="{% url 'sk_python_project:topics' %}" class="hover:underline">Topics</a>
-            <a href="{% url 'sk_python_project:all_topics' %}" class="hover:underlines">All Topics</a>
-            <a href="https://github.com/gtr3base" target="_blank" class="hover:underline">Dev</a>
-        </div>
-        <div class="flex items-center space-x-4">
-            {% if user.is_authenticated %}
-                <a href="{% url 'sk_python_project:profile' %}" class="mr-4 text-white hover:underline">
-                    Hello, <strong>{{ user.username }}</strong>
-                </a>
-                <form action="{% url 'users:logout' %}" method="post" class="inline">
-                    {% csrf_token %}
-                    <button type="submit" class="bg-red-500 px-3 py-1 rounded text-white hover:bg-red-600">Log out</button>
-                </form>
-            {% else %}
-                <a href="{% url 'users:login' %}" class="bg-green-500 px-3 py-1 rounded text-white hover:bg-green-600">Log in</a>
-                <a href="{% url 'users:register' %}" class="bg-yellow-500 px-3 py-1 rounded text-white hover:bg-yellow-600 ml-2">Register</a>
-            {% endif %}
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-1 max-w-md">
+                    <form action="{% url 'sk_python_project:all_topics' %}" method="GET" class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input type="text" name="q" placeholder="Search topics..."
+                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-full bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-500 dark:placeholder-gray-400 text-sm transition">
+                    </form>
+                </div>
+
+                <div class="hidden md:flex space-x-8">
+                    <a href="{% url 'sk_python_project:index' %}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 transition">
+                        <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        Home
+                    </a>
+                    <a href="{% url 'sk_python_project:topics' %}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 transition">
+                        <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        My Topics
+                    </a>
+                    <a href="{% url 'sk_python_project:all_topics' %}" class="inline-flex items-center px-1 pt-1 border-b-2 border-primary-500 text-sm font-medium text-gray-900 dark:text-white border-primary-500 transition">
+                        <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        </svg>
+                        Community
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <a href="https://github.com/gtr3base" target="_blank" class="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        <div class="flex items-center space-x-2">
+                            <a href="{% url 'sk_python_project:profile' %}" class="flex items-center space-x-2 group">
+                                <div class="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-300 font-medium group-hover:opacity-80 transition">
+                                    {{ user.username|first|upper }}
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:inline">
+                                    {{ user.username }}
+                                </span>
+                            </a>
+                            <form action="{% url 'users:logout' %}" method="post" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="ml-2 px-3 py-1.5 rounded-md text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                                    Sign Out
+                                </button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center space-x-2">
+                            <a href="{% url 'users:login' %}" class="px-3 py-1.5 rounded-md text-sm font-medium bg-primary-500 text-white hover:bg-primary-600 transition">
+                                Log In
+                            </a>
+                            <a href="{% url 'users:register' %}" class="px-3 py-1.5 rounded-md text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                Register
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </nav>
 
-    <main class="p-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {% block content %}{% endblock content %}
     </main>
+
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
 </body>
 </html>

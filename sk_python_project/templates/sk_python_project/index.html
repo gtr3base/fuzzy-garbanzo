@@ -1,7 +1,17 @@
 {% extends "sk_python_project/base.html" %}
 
 {% block content %}
-<main class="p-6">
-    <p class="mt-6 text-lg text-gray-700">This project helps you keep track of your learning, for any topic you're learning about.</p>
+<main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Learning Tracker</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+            Track your learning progress for any topic you're exploring.
+        </p>
+        <div class="mt-8">
+            <a href="{% url 'sk_python_project:all_topics' %}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+                Get Started
+            </a>
+        </div>
+    </div>
 </main>
 {% endblock content %}
