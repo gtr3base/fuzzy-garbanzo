@@ -1,6 +1,8 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
-from .models import Topic, Entry, Comment, Like, Dislike
+from .models import Topic, Entry, Comment, Like, Dislike, Notification
 from .forms import TopicForm, EntryForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
@@ -9,7 +11,10 @@ from .forms import UsernameChangeForm, CustomPasswordChangeForm
 
 
 def index(request):
-    return render(request, 'sk_python_project/index.html')
+    unread_count = 0
+    if request.user.is_authenticated:
+        unread_count = request.user.notifications.filter(is_read=False).count()
+    return render(request, 'sk_python_project/index.html', {'unread_count': unread_count})
 
 
 @login_required
@@ -131,7 +136,18 @@ def like_topic(request, topic_id):
     if not Like.objects.filter(user=request.user, topic=topic).exists():
         Like.objects.create(user=request.user, topic=topic)
         Dislike.objects.filter(user=request.user, topic=topic).delete()
+
+        if topic.owner != request.user:
+            Notification.objects.create(
+                recipient=topic.owner,
+                sender=request.user,
+                topic=topic,
+                action='like'
+            )
+            send_notification(topic.owner.id)
+
     return redirect('sk_python_project:all_topics')
+
 
 @login_required
 def dislike_topic(request, topic_id):
@@ -139,7 +155,18 @@ def dislike_topic(request, topic_id):
     if not Dislike.objects.filter(user=request.user, topic=topic).exists():
         Dislike.objects.create(user=request.user, topic=topic)
         Like.objects.filter(user=request.user, topic=topic).delete()
+
+        if topic.owner != request.user:
+            Notification.objects.create(
+                recipient=topic.owner,
+                sender=request.user,
+                topic=topic,
+                action='dislike'
+            )
+            send_notification(topic.owner.id)
+
     return redirect('sk_python_project:all_topics')
+
 
 @login_required
 def add_comment(request, topic_id):
@@ -148,4 +175,54 @@ def add_comment(request, topic_id):
         comment_text = request.POST.get('comment')
         if comment_text:
             Comment.objects.create(user=request.user, topic=topic, text=comment_text)
+
+            if topic.owner != request.user:
+                notification_text = f"{request.user.username} commented on your topic '{topic.text}': {comment_text[:50]}{'...' if len(comment_text) > 50 else ''}"
+                Notification.objects.create(
+                    recipient=topic.owner,
+                    sender=request.user,
+                    topic=topic,
+                    action='comment',
+                    text=notification_text
+                )
+                send_notification(topic.owner.id, text=notification_text, topic=topic.text)
+
     return redirect('sk_python_project:all_topics')
+
+
+def send_notification(user_id, text=None, topic=None):
+    channel_layer = get_channel_layer()
+    count = Notification.objects.filter(recipient_id=user_id, is_read=False).count()
+    async_to_sync(channel_layer.group_send)(
+        f"notifications_{user_id}",
+        {
+            'type': 'send.notification',
+            'unread_count': count,
+            'message': 'You have a new notification!',
+            'text': text,
+            'topic': topic
+        }
+    )
+
+
+@login_required
+def notification_unread_count(request):
+    count = Notification.objects.filter(recipient=request.user, is_read=False).count()
+    return JsonResponse({'count': count})
+
+
+@login_required
+def notification_list(request):
+    Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+
+    notifications = Notification.objects.filter(recipient=request.user).order_by('-created_at')[:10]
+
+    return render(request, 'sk_python_project/notification_list.html', {
+        'notifications': notifications
+    })
+
+
+@login_required
+def notification_mark_as_read(request):
+    Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({'status': 'success'})

@@ -60,22 +60,25 @@ class Comment(models.Model):
 
 
 class Notification(models.Model):
-    NOTIFICATION_TYPES = [
-        ('like', 'Like'),
-        ('dislike', 'Dislike'),
-        ('comment', 'Comment'),
-    ]
-
     recipient = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, related_name='sent_notifications', on_delete=models.CASCADE)
-    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
-    topic = models.ForeignKey('Topic', on_delete=models.CASCADE, null=True, blank=True)
-    entry = models.ForeignKey('Entry', on_delete=models.CASCADE, null=True, blank=True)
-    read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(default=timezone.now)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    action = models.CharField(max_length=20, default='acted')
+    text = models.CharField(max_length=255, blank=True, null=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ['-created_at']
+    def save(self, *args, **kwargs):
+        if not self.text:
+            if self.action == 'comment':
+                self.text = f"{self.sender.username} commented on your topic '{self.topic.text}'"
+            elif self.action == 'like':
+                self.text = f"{self.sender.username} liked your topic '{self.topic.text}'"
+            elif self.action == 'dislike':
+                self.text = f"{self.sender.username} disliked your topic '{self.topic.text}'"
+            else:
+                self.text = f"{self.sender.username} {self.action} your topic '{self.topic.text}'"
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.sender.username} {self.get_notification_type_display()} - {self.recipient.username}"
+        return f"{self.sender} {self.action} on {self.topic}"

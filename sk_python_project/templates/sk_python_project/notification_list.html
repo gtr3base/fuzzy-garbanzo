@@ -1,0 +1,16 @@
+<div class="divide-y divide-gray-200 dark:divide-gray-700">
+    {% for notification in notifications %}
+    <div class="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+        <div class="text-sm text-gray-900 dark:text-gray-100">
+            {{ notification.text }}
+        </div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {{ notification.created_at|timesince }} ago
+        </div>
+    </div>
+    {% empty %}
+    <div class="px-4 py-3 text-center text-sm text-gray-500 dark:text-gray-400">
+        No notifications
+    </div>
+    {% endfor %}
+</div>
