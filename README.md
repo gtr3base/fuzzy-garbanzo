@@ -4,7 +4,6 @@ Welcome to the **SK Python Project**, a Django-based web app for managing person
 
 ![Django](https://img.shields.io/badge/Powered%20By-Django-092E20?logo=django&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)
-![License](https://img.shields.io/badge/License-MIT-green)
 ![Contributions Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
 ---
