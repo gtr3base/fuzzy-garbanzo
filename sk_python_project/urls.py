@@ -17,4 +17,7 @@ urlpatterns = [
     path('notifications/unread-count/', views.notification_unread_count, name='notification_unread_count'),
     path('notifications/list/', views.notification_list, name='notification_list'),
     path('notifications/mark-as-read/', views.notification_mark_as_read, name='notification_mark_as_read'),
+    path('topic/<int:topic_id>/delete/', views.delete_topic, name='delete_topic'),
+    path('entry/<int:entry_id>/delete/', views.delete_entry, name='delete_entry'),
+    path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
 ]

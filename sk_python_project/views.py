@@ -1,7 +1,11 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.models import User
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from .admin_utils import can_view_all_topics, is_admin
 from .models import Topic, Entry, Comment, Like, Dislike, Notification
 from .forms import TopicForm, EntryForm
 from django.contrib.auth.decorators import login_required
@@ -57,6 +61,9 @@ def profile(request):
 def topic(request, topic_id):
     topic = get_object_or_404(Topic, id=topic_id)
     if topic.owner != request.user:
+        raise Http404
+
+    if not (topic.owner == request.user or can_view_all_topics(request.user)):
         raise Http404
 
     entries = topic.entry_set.order_by('-date_added')
@@ -226,3 +233,62 @@ def notification_list(request):
 def notification_mark_as_read(request):
     Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
     return JsonResponse({'status': 'success'})
+
+
+@staff_member_required
+def admin_dashboard(request):
+    recent_topics = Topic.objects.order_by('-date_added')[:10]
+    recent_entries = Entry.objects.order_by('-date_added')[:10]
+    unread_notifications = Notification.objects.filter(is_read=False).count()
+    user_count = User.objects.count()
+    private_topics_count = Topic.objects.filter(is_private=True).count()
+    total_likes = Like.objects.count()
+    total_comments = Comment.objects.count()
+
+    context = {
+        'recent_topics': recent_topics,
+        'recent_entries': recent_entries,
+        'unread_notifications': unread_notifications,
+        'user_count': user_count,
+        'private_topics_count': private_topics_count,
+        'total_likes': total_likes,
+        'total_comments': total_comments,
+    }
+    return render(request, 'sk_python_project/dashboard.html', context)
+
+
+@login_required
+def delete_topic(request, topic_id):
+    topic = get_object_or_404(Topic, id=topic_id)
+    if not (is_admin(request.user) or topic.owner == request.user):
+        raise Http404
+
+    if request.method == 'POST':
+        topic_name = topic.text
+        topic.delete()
+        messages.success(request, f"Topic '{topic_name}' was deleted successfully.")
+        return redirect('sk_python_project:topics')
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return render(request, 'confirm_delete.html', {'object': topic})
+
+    return render(request, 'sk_python_project/confirm_delete.html', {'topic': topic})
+
+
+@login_required
+def delete_entry(request, entry_id):
+    entry = get_object_or_404(Entry, id=entry_id)
+    topic = entry.topic
+
+    if not (is_admin(request.user) or topic.owner == request.user):
+        raise Http404
+
+    if request.method == 'POST':
+        entry.delete()
+        messages.success(request, "Entry was deleted successfully.")
+        return redirect('sk_python_project:topic', topic_id=topic.id)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return render(request, 'admin/confirm_delete_entry.html', {'object': entry})
+
+    return render(request, 'sk_python_project/confirm_delete_entry.html', {'entry': entry})

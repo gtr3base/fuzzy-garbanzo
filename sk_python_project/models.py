@@ -1,13 +1,18 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
-
 
 class Topic(models.Model):
     text = models.CharField(max_length=200)
     date_added = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     is_private = models.BooleanField(default=False)
+
+    class Meta:
+        permissions = [
+            ("can_delete_any_topic", "Can delete any topic"),
+            ("can_view_all_topics", "Can view all topics (including private)"),
+            ("can_edit_any_topic", "Can edit any topic"),
+        ]
 
     def __str__(self):
         return self.text
@@ -20,6 +25,10 @@ class Entry(models.Model):
 
     class Meta:
         verbose_name_plural = 'entries'
+        permissions = [
+            ("can_delete_any_entry", "Can delete any entry"),
+            ("can_edit_any_entry", "Can edit any entry"),
+        ]
 
     def __str__(self):
         return f"{self.text[:50]}..."
