@@ -6,10 +6,18 @@ from django.contrib.auth.forms import PasswordChangeForm
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['text', 'is_private']
+        fields = ['text','image','is_private']
         labels = {'text':''}
 
     is_private = forms.BooleanField(required=False, initial=False, label="Make this topic private")
+
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if image:
+            if image.size > 5*1024*1024:
+                raise forms.ValidationError('Image files mem should be < 5 MB')
+            return image
+        return None
 
 
 class EntryForm(forms.ModelForm):

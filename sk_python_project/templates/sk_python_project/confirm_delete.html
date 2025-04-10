@@ -14,13 +14,13 @@
     <p class="text-center text-gray-600 dark:text-gray-300 mb-6">
         Are you sure you want to delete the topic <span class="font-medium text-gray-900 dark:text-white">"{{ topic.text }}"</span>?
     </p>
-
+        <input type="hidden" name="next" value="{{ request.path }}">
     <form method="post" class="flex justify-center space-x-4">
         {% csrf_token %}
         <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
             Delete
         </button>
-        <a href="{% url 'sk_python_project:topic' topic.id %}" class="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
+        <a href="{% url 'sk_python_project:admin_dashboard' %}" class="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
             Cancel
         </a>
     </form>

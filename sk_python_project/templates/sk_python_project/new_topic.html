@@ -13,7 +13,7 @@
         </div>
 
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-8 border border-gray-200 dark:border-gray-700">
-            <form action="{% url 'sk_python_project:new_topic' %}" method="post" class="space-y-6">
+            <form action="{% url 'sk_python_project:new_topic' %}" method="post" class="space-y-6" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 {% for field in form %}
@@ -32,6 +32,25 @@
                             <p class="text-gray-500 dark:text-gray-400">{{ field.help_text }}</p>
                             {% endif %}
                         </div>
+                    </div>
+                    {% elif field.name == 'image' %}
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ field.label }}
+                    </label>
+                    <div class="mt-1">
+                        <div class="relative">
+                            <input type="file" id="{{ field.id_for_label }}" name="{{ field.name }}"
+                                class="block w-full text-sm text-gray-500 dark:text-gray-400
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-md file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900 dark:file:text-blue-200
+                                hover:file:bg-blue-100 dark:hover:file:bg-blue-800
+                                focus:outline-none">
+                        </div>
+                        {% if field.errors %}
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ field.errors }}</p>
+                        {% endif %}
                     </div>
                     {% else %}
                     <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">

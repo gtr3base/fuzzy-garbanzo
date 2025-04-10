@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'sk_python_project'
 urlpatterns = [
@@ -20,4 +22,5 @@ urlpatterns = [
     path('topic/<int:topic_id>/delete/', views.delete_topic, name='delete_topic'),
     path('entry/<int:entry_id>/delete/', views.delete_entry, name='delete_entry'),
     path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
-]
+    path('explore_topic/<int:topic_id>', views.explore_topic, name='explore_topic')
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

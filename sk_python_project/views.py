@@ -2,6 +2,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
@@ -60,14 +61,19 @@ def profile(request):
 @login_required
 def topic(request, topic_id):
     topic = get_object_or_404(Topic, id=topic_id)
-    if topic.owner != request.user:
-        raise Http404
-
-    if not (topic.owner == request.user or can_view_all_topics(request.user)):
-        raise Http404
+    if topic.is_private and topic.owner != request.user:
+        raise PermissionDenied("You dont have permission to view this topic")
+    #if not (topic.owner == request.user or can_view_all_topics(request.user)):
+    #    raise Http404
 
     entries = topic.entry_set.order_by('-date_added')
-    context = {'topic': topic, 'entries': entries}
+    comments = topic.comment_set.order_by('-created_at')
+
+    context = {
+        'topic': topic,
+        'entries': entries,
+        'comments': comments,
+    }
     return render(request, 'sk_python_project/topic.html', context)
 
 
@@ -76,7 +82,7 @@ def new_topic(request):
     if request.method != 'POST':
         form = TopicForm()
     else:
-        form = TopicForm(data=request.POST)
+        form = TopicForm(request.POST, request.FILES)
         if form.is_valid():
             new_topic = form.save(commit=False)
             new_topic.owner = request.user
@@ -89,7 +95,7 @@ def new_topic(request):
 
 
 def all_topics(request):
-    topics = Topic.objects.filter(is_private=False)
+    topics = Topic.objects.filter(is_private=False).order_by('-date_added')
 
     query = request.GET.get('q')
     if query:
@@ -104,6 +110,9 @@ def new_entry(request, topic_id):
     if request.method != 'POST':
         form = EntryForm()
     else:
+        if topic.owner != request.user:
+            raise PermissionDenied('You dont have permission to perform this action')
+
         form = EntryForm(data=request.POST)
         if form.is_valid():
             new_entry = form.save(commit=False)
@@ -116,14 +125,27 @@ def new_entry(request, topic_id):
     return render(request, 'sk_python_project/new_entry.html', context)
 
 
+def explore_topic(request, topic_id):
+    topic = get_object_or_404(Topic, id=topic_id)
+
+    entries = topic.entry_set.order_by('-date_added')
+    comments = topic.comment_set.order_by('-created_at')
+
+    context = {
+        'topic': topic,
+        'entries': entries,
+        'comments': comments,
+    }
+    return render(request, 'sk_python_project/explore_topic.html', context)
+
+
 @login_required
 def edit_entry(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
 
     if topic.owner != request.user:
-        raise Http404
-
+        raise PermissionDenied('You dont have permission to perform this action')
 
     if request.method != 'POST':
         form = EntryForm(instance=entry)
@@ -153,7 +175,8 @@ def like_topic(request, topic_id):
             )
             send_notification(topic.owner.id)
 
-    return redirect('sk_python_project:all_topics')
+    next_url = request.POST.get('next', request.GET.get('next', 'sk_python_project:all_topics'))
+    return redirect(next_url)
 
 
 @login_required
@@ -172,7 +195,8 @@ def dislike_topic(request, topic_id):
             )
             send_notification(topic.owner.id)
 
-    return redirect('sk_python_project:all_topics')
+    next_url = request.POST.get('next', request.GET.get('next', 'sk_python_project:all_topics'))
+    return redirect(next_url)
 
 
 @login_required
@@ -194,7 +218,8 @@ def add_comment(request, topic_id):
                 )
                 send_notification(topic.owner.id, text=notification_text, topic=topic.text)
 
-    return redirect('sk_python_project:all_topics')
+    next_url = request.POST.get('next', request.GET.get('next', 'sk_python_project:all_topics'))
+    return redirect(next_url)
 
 
 def send_notification(user_id, text=None, topic=None):
@@ -267,7 +292,8 @@ def delete_topic(request, topic_id):
         topic_name = topic.text
         topic.delete()
         messages.success(request, f"Topic '{topic_name}' was deleted successfully.")
-        return redirect('sk_python_project:topics')
+        next_url = request.POST.get('next', request.GET.get('next', 'sk_python_project:admin_dashboard'))
+        return redirect(next_url)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return render(request, 'confirm_delete.html', {'object': topic})
@@ -286,7 +312,8 @@ def delete_entry(request, entry_id):
     if request.method == 'POST':
         entry.delete()
         messages.success(request, "Entry was deleted successfully.")
-        return redirect('sk_python_project:topic', topic_id=topic.id)
+        next_url = request.POST.get('next', request.GET.get('next', 'sk_python_project:admin_dashboard'))
+        return redirect(next_url)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return render(request, 'admin/confirm_delete_entry.html', {'object': entry})

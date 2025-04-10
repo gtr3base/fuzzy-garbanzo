@@ -6,6 +6,12 @@ class Topic(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     is_private = models.BooleanField(default=False)
+    image = models.ImageField(
+        upload_to='topic_images/',
+        blank=True,
+        null=True,
+        help_text='Upload an image for this topic'
+    )
 
     class Meta:
         permissions = [
