@@ -1,45 +1,52 @@
 {% extends "sk_python_project/base.html" %}
 
 {% block content %}
-<main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
+<main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+    <!-- Topic Card with Image -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl">
         {% if topic.image %}
         <div class="h-64 w-full overflow-hidden">
-            <img src="{{ topic.image.url }}" alt="{{ topic.text }}" class="w-full h-full object-cover">
+            <img src="{{ topic.image.url }}" alt="{{ topic.text }}"
+                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
         </div>
         {% endif %}
 
         <div class="p-6">
+            <!-- Topic Header with Like/Dislike Buttons -->
             <div class="flex items-start justify-between">
                 <div class="flex-1">
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
                         {{ topic.text }}
                     </h1>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
                         Created by {{ topic.owner.username|default:"Anonymous" }} • {{ topic.date_added|timesince }} ago
                     </p>
                 </div>
 
                 <div class="flex space-x-2">
+                    <!-- Like Button with Animation -->
                     <form method="POST" action="{% url 'sk_python_project:like_topic' topic.id %}">
                         {% csrf_token %}
-                          <input type="hidden" name="next" value="{{ request.path }}">
-                        <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit"
+                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-all duration-300 transform hover:scale-105 active:scale-95 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 group-hover:animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                             </svg>
-                            {{ topic.like_set.count }}
+                            <span class="transition-all duration-200">{{ topic.like_set.count }}</span>
                         </button>
                     </form>
 
+                    <!-- Dislike Button with Animation -->
                     <form method="POST" action="{% url 'sk_python_project:dislike_topic' topic.id %}">
                         {% csrf_token %}
-                          <input type="hidden" name="next" value="{{ request.path }}">
-                        <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit"
+                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-300 transform hover:scale-105 active:scale-95 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 group-hover:animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m0 0v9m0-9h2.765a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 14H17m0 0v5M7 11h3m0 0H7m3 0v5" />
                             </svg>
-                            {{ topic.dislike_set.count }}
+                            <span class="transition-all duration-200">{{ topic.dislike_set.count }}</span>
                         </button>
                     </form>
                 </div>
@@ -48,73 +55,74 @@
             <!-- Entries/Content Section -->
             <div class="mt-6 space-y-4">
                 {% for entry in topic.entry_set.all %}
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-600/50">
                     <div class="flex items-start space-x-3">
                         <div class="flex-shrink-0">
-                            <div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-medium">
+                            <div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-medium transition-colors duration-300 hover:scale-110">
                                 {{ entry.owner.username|first|upper }}
                             </div>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-300">
                                 {{ entry.owner.username }}
-                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2 transition-colors duration-300">
                                     {{ entry.date_added|timesince }} ago
                                 </span>
                             </p>
-                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">
                                 {{ entry.text|linebreaks }}
                             </p>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="text-center py-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="text-center py-6 animate-fade-in">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 text-gray-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">No entries yet</p>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">No entries yet</p>
                 </div>
                 {% endfor %}
             </div>
 
             <!-- Comments Section -->
             <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Comments</h3>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 transition-colors duration-300">Comments</h3>
 
                 <div class="space-y-4 mb-6 max-h-96 overflow-y-auto custom-scrollbar">
                     {% for comment in topic.comment_set.all %}
-                    <div class="flex space-x-3">
+                    <div class="flex space-x-3 animate-fade-in-up" style="animation-delay: {{ forloop.counter|divisibleby:2|yesno:'0.1s,0.2s' }}">
                         <div class="flex-shrink-0">
-                            <div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-medium">
+                            <div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-medium transition-colors duration-300 hover:scale-110">
                                 {{ comment.user.username|first|upper }}
                             </div>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-300">
                                 {{ comment.user.username }}
-                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2 transition-colors duration-300">
                                     {{ comment.created_at|timesince }} ago
                                 </span>
                             </p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">
+                            <p class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">
                                 {{ comment.text }}
                             </p>
                         </div>
                     </div>
                     {% empty %}
-                    <p class="text-sm text-gray-500 dark:text-gray-400">No comments yet</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300 animate-fade-in">No comments yet</p>
                     {% endfor %}
                 </div>
 
                 <!-- Add Comment Form -->
-                <form method="POST" action="{% url 'sk_python_project:add_comment' topic.id %}">
+                <form method="POST" action="{% url 'sk_python_project:add_comment' topic.id %}" class="animate-fade-in">
                     {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
                     <div class="flex items-center space-x-2">
-                                                <input type="hidden" name="next" value="{{ request.path }}">
                         <input type="text" name="comment" placeholder="Write a comment..."
-                            class="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full border-none focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                        <button type="submit" class="p-2 text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            class="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full border-none focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm transition-all duration-300 focus:shadow-lg focus:shadow-blue-500/10 hover:shadow-md">
+                        <button type="submit"
+                                class="p-2 text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 transform hover:scale-110 active:scale-95">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                             </svg>
@@ -127,30 +135,74 @@
 </main>
 
 <style>
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.4s ease-out forwards;
+    }
+
+    .animate-bounce {
+        animation: bounce 0.5s ease-in-out;
+    }
+
+    .animate-pulse {
+        animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
     .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
+        width: 6px;
+        height: 6px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb {
         background-color: rgba(156, 163, 175, 0.5);
-        border-radius: 4px;
+        border-radius: 3px;
+        transition: background-color 0.3s;
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(156, 163, 175, 0.7);
+        background-color: rgba(156, 163, 175, 0.8);
     }
 
     .custom-scrollbar::-webkit-scrollbar-track {
         background-color: rgba(229, 231, 235, 0.1);
-        border-radius: 4px;
     }
 
+    /* Dark mode scrollbar */
     @media (prefers-color-scheme: dark) {
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background-color: rgba(75, 85, 99, 0.5);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(75, 85, 99, 0.7);
+            background-color: rgba(75, 85, 99, 0.8);
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background-color: rgba(31, 41, 55, 0.1);

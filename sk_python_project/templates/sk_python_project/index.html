@@ -2,16 +2,149 @@
 
 {% block content %}
 <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Learning Tracker</h1>
-        <p class="text-lg text-gray-600 dark:text-gray-300">
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-blue-200 dark:bg-blue-900 opacity-20 animate-float-1"></div>
+        <div class="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-purple-200 dark:bg-purple-900 opacity-20 animate-float-2"></div>
+        <div class="absolute bottom-1/4 right-1/3 w-28 h-28 rounded-full bg-indigo-200 dark:bg-indigo-900 opacity-20 animate-float-3"></div>
+    </div>
+
+    <!-- Main content container -->
+    <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 backdrop-blur-sm bg-opacity-70 dark:bg-opacity-70 border border-gray-100 dark:border-gray-700 animate-fade-in-up transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+        <!-- Animated title -->
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 animate-text-focus-in">
+            <span class="inline-block">Learning</span>
+            <span class="inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 animate-gradient-shift">Tracker</span>
+        </h1>
+
+        <!-- Animated subtitle -->
+        <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 animate-fade-in" style="animation-delay: 0.3s">
             Track your learning progress for any topic you're exploring.
         </p>
-        <div class="mt-8">
-            <a href="{% url 'sk_python_project:all_topics' %}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
-                Get Started
+
+        <!-- Animated button with floating icon -->
+        <div class="mt-8 animate-fade-in" style="animation-delay: 0.5s">
+            <a href="{% url 'sk_python_project:all_topics' %}"
+               class="relative inline-flex items-center px-8 py-4 border border-transparent text-lg font-semibold rounded-xl shadow-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 group overflow-hidden">
+                <span class="relative z-10 flex items-center">
+                    <span class="group-hover:translate-x-1 transition-transform duration-300">Get Started</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-3 h-6 w-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-2 group-hover:translate-x-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    </svg>
+                </span>
+                <span class="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
             </a>
+        </div>
+
+        <!-- Animated learning icons -->
+        <div class="mt-12 flex justify-center space-x-8 sm:space-x-12 animate-fade-in" style="animation-delay: 0.7s">
+            <div class="text-blue-500 dark:text-blue-400 transition-all duration-500 hover:-translate-y-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+            </div>
+            <div class="text-purple-500 dark:text-purple-400 transition-all duration-500 hover:-translate-y-2" style="animation-delay: 0.1s">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            </div>
+            <div class="text-indigo-500 dark:text-indigo-400 transition-all duration-500 hover:-translate-y-2" style="animation-delay: 0.2s">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            </div>
         </div>
     </div>
 </main>
+
+<style>
+    /* Base animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes textFocusIn {
+        0% {
+            filter: blur(12px);
+            opacity: 0;
+        }
+        100% {
+            filter: blur(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes float1 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(-10px, -15px) rotate(2deg); }
+    }
+
+    @keyframes float2 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(10px, 15px) rotate(-2deg); }
+    }
+
+    @keyframes float3 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(5px, -10px) rotate(1deg); }
+    }
+
+    /* Animation classes */
+    .animate-fade-in {
+        animation: fadeIn 1s ease-out forwards;
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .animate-text-focus-in {
+        animation: textFocusIn 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+    }
+
+    .animate-gradient-shift {
+        background-size: 200% 200%;
+        animation: gradientShift 6s ease infinite;
+    }
+
+    .animate-float-1 {
+        animation: float1 8s ease-in-out infinite;
+    }
+
+    .animate-float-2 {
+        animation: float2 10s ease-in-out infinite;
+    }
+
+    .animate-float-3 {
+        animation: float3 12s ease-in-out infinite;
+    }
+
+    /* Smooth transitions for all elements */
+    * {
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* Custom styling */
+    .backdrop-blur-sm {
+        backdrop-filter: blur(8px);
+    }
+</style>
 {% endblock content %}

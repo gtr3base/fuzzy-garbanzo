@@ -52,9 +52,14 @@ def profile(request):
     else:
         password_form = CustomPasswordChangeForm(user=request.user)
 
+    user_topics_count =  Topic.objects.filter(owner=request.user).count()
+    comments_count = Comment.objects.filter(user=request.user).count()
+
     return render(request, 'sk_python_project/profile.html', {
         'username_form': username_form,
         'password_form': password_form,
+        'topics_count': user_topics_count,
+        'comments_count': comments_count,
     })
 
 
