@@ -28,6 +28,9 @@ Welcome to the **SK Python Project**, a Django-based web app for managing person
 - 🔍 **Search Functionality**  
   Easily search through public or personal topics.
 
+- 💎 **Admin functionality**
+  Manage project using django, delete topics, entries using built-in feature
+
 ---
 
 ## 🛠️ Tech Stack
