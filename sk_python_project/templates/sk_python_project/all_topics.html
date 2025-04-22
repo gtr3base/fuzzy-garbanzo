@@ -2,7 +2,6 @@
 
 {% block extra_head %}
 <style>
-    /* Gradient Animation */
     body {
         background: linear-gradient(-45deg, #f3f4f6, #e5e7eb, #d1d5db, #9ca3af);
         background-size: 400% 400%;
@@ -20,14 +19,46 @@
         background: linear-gradient(-45deg, #111827, #1f2937, #374151, #4b5563);
     }
 
-
-
-    @keyframes float-up {
-        from { transform: translateY(100vh) scale(0); opacity: 1; }
-        to { transform: translateY(-20vh) scale(1); opacity: 0; }
+    .topic-card {
+        animation: cardEntrance 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
     }
 
-    /* Card Glow Effect */
+    @keyframes cardEntrance {
+        0% {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            box-shadow: 0 0 0 rgba(99, 102, 241, 0);
+        }
+        70% {
+            opacity: 0.8;
+            transform: translateY(-5px) scale(1.02);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.2);
+        }
+    }
+
+    .topic-card:hover {
+        animation: cardHover 0.4s ease-out forwards;
+    }
+
+    @keyframes cardHover {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(-3px); }
+    }
+
+    .topic-card:nth-child(1) { animation-delay: 0.1s; }
+    .topic-card:nth-child(2) { animation-delay: 0.2s; }
+    .topic-card:nth-child(3) { animation-delay: 0.3s; }
+    .topic-card:nth-child(4) { animation-delay: 0.4s; }
+    .topic-card:nth-child(5) { animation-delay: 0.5s; }
+    .topic-card:nth-child(6) { animation-delay: 0.6s; }
+
     .glow-card {
         position: relative;
         overflow: hidden;
@@ -50,21 +81,6 @@
         opacity: 1;
     }
 
-    /* Existing animations */
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
-    .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
-
-    /* Custom scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb {
         background-color: rgba(156, 163, 175, 0.5);

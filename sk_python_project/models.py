@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
 from django.db import models
 
 class Topic(models.Model):
@@ -11,6 +12,15 @@ class Topic(models.Model):
         blank=True,
         null=True,
         help_text='Upload an image for this topic'
+    )
+    video = models.FileField(
+        upload_to='topic_videos/',
+        blank=True,
+        null=True,
+        help_text='Upload a video for this topic',
+        validators=[
+            FileExtensionValidator(allowed_extensions=['mp4','mov','avi','webm'])
+        ]
     )
 
     class Meta:

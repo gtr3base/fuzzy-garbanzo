@@ -54,11 +54,34 @@
                                 file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900 dark:file:text-blue-200
                                 hover:file:bg-blue-100 dark:hover:file:bg-blue-800
                                 focus:outline-none transition-all duration-300
-                                group-hover:shadow-lg group-hover:ring-2 group-hover:ring-blue-200 dark:group-hover:ring-blue-800">
+                                group-hover:shadow-lg group-hover:ring-2 group-hover:ring-blue-200 dark:group-hover:ring-blue-800"
+                                accept="image/*">
                         </div>
                         {% if field.errors %}
                         <p class="mt-2 text-sm text-red-600 dark:text-red-400 animate-pulse">{{ field.errors }}</p>
                         {% endif %}
+                    </div>
+                    {% elif field.name == 'video' %}
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ field.label }}
+                    </label>
+                    <div class="mt-1">
+                        <div class="relative group">
+                            <input type="file" id="{{ field.id_for_label }}" name="{{ field.name }}"
+                                class="block w-full text-sm text-gray-500 dark:text-gray-400
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-md file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900 dark:file:text-blue-200
+                                hover:file:bg-blue-100 dark:hover:file:bg-blue-800
+                                focus:outline-none transition-all duration-300
+                                group-hover:shadow-lg group-hover:ring-2 group-hover:ring-blue-200 dark:group-hover:ring-blue-800"
+                                accept="video/mp4,video/x-m4v,video/*">
+                        </div>
+                        {% if field.errors %}
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400 animate-pulse">{{ field.errors }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Supported formats: MP4, MOV, AVI, WEBM (max 50MB)</p>
                     </div>
                     {% else %}
                     <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">

@@ -2,12 +2,55 @@
 
 {% block content %}
 <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
-    <!-- Topic Card with Image -->
+    <!-- Topic Card with Image/Video -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl">
-        {% if topic.image %}
-        <div class="h-64 w-full overflow-hidden">
-            <img src="{{ topic.image.url }}" alt="{{ topic.text }}"
-                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+        {% if topic.image or topic.video %}
+        <!-- Media Preview with Navigation -->
+        <div class="h-64 w-full overflow-hidden relative group">
+            {% if topic.image and topic.video %}
+            <!-- Both image and video exist - show navigation -->
+            <div class="absolute inset-0 z-10 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button class="media-nav-btn bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all duration-300 transform hover:scale-110"
+                        onclick="switchMedia(this.closest('.group'))">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button class="media-nav-btn bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all duration-300 transform hover:scale-110"
+                        onclick="switchMedia(this.closest('.group'))">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+            {% endif %}
+
+            <!-- Image Preview (default visible if both exist) -->
+            <div id="image-preview" class="w-full h-full {% if topic.image and topic.video %}block{% elif topic.image %}block{% else %}hidden{% endif %}">
+                <img src="{{ topic.image.url }}" alt="{{ topic.text }}"
+                     class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+            </div>
+
+            <!-- Video Preview -->
+            {% if topic.video %}
+            <div id="video-preview" class="w-full h-full {% if topic.image and topic.video %}hidden{% else %}block{% endif %}">
+                <video class="w-full h-full object-cover" muted loop>
+                    <source src="{{ topic.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                {% if topic.image %}
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <button class="video-play-button bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 transition-all duration-300 transform hover:scale-110 z-20"
+                            onclick="event.stopPropagation(); openFullscreenVideo('{{ topic.video.url }}', this.closest('.group'))">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
         {% endif %}
 
@@ -134,6 +177,20 @@
     </div>
 </main>
 
+<!-- Video Fullscreen Modal - Updated for Landscape Orientation -->
+<div id="videoModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-90 flex items-center justify-center p-4">
+    <div class="relative w-full max-w-6xl landscape-container">
+        <button id="closeVideoModal" class="absolute -top-12 right-0 text-white text-4xl hover:text-gray-300 transition-colors duration-200 z-50">
+            &times;
+        </button>
+        <div class="aspect-w-16 aspect-h-9 w-full h-auto max-h-[80vh]">
+            <video id="fullscreenVideo" controls class="w-full h-full rounded-lg bg-black" autoplay>
+                Your browser does not support the video element.
+            </video>
+        </div>
+    </div>
+</div>
+
 <style>
     @keyframes fadeIn {
         from { opacity: 0; }
@@ -196,6 +253,37 @@
         background-color: rgba(229, 231, 235, 0.1);
     }
 
+    /* Video Play Button Styles */
+    .video-play-button {
+        backdrop-filter: blur(5px);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    }
+
+    .video-play-button:hover {
+        box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
+    }
+
+    /* Video Modal Styles */
+    #videoModal {
+        transition: opacity 0.3s ease;
+    }
+
+    #videoModal:not(.hidden) {
+        display: flex;
+    }
+
+    /* Landscape orientation for mobile */
+    @media (orientation: portrait) {
+        .landscape-container {
+            transform: rotate(90deg);
+            transform-origin: center;
+            width: 90vh;
+            height: 90vw;
+            max-width: 90vh;
+            max-height: 90vw;
+        }
+    }
+
     /* Dark mode scrollbar */
     @media (prefers-color-scheme: dark) {
         .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -209,4 +297,116 @@
         }
     }
 </style>
+
+<script>
+    function switchMedia(container) {
+        const imagePreview = container.querySelector('#image-preview');
+        const videoPreview = container.querySelector('#video-preview');
+
+        if (imagePreview && videoPreview) {
+            if (imagePreview.classList.contains('hidden')) {
+                imagePreview.classList.remove('hidden');
+                videoPreview.classList.add('hidden');
+                const video = videoPreview.querySelector('video');
+                if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            } else {
+                imagePreview.classList.add('hidden');
+                videoPreview.classList.remove('hidden');
+                const video = videoPreview.querySelector('video');
+                if (video) {
+                    video.play().catch(e => console.log('Autoplay prevented:', e));
+                }
+            }
+        }
+    }
+
+    function openFullscreenVideo(videoUrl, container) {
+        const modal = document.getElementById('videoModal');
+        const video = document.getElementById('fullscreenVideo');
+        const closeBtn = document.getElementById('closeVideoModal');
+
+        video.src = videoUrl;
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        function lockLandscape() {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(err => {
+                    console.log('Orientation lock failed: ', err);
+                });
+            }
+        }
+
+        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+            lockLandscape();
+        }
+
+        video.play().catch(e => console.log('Autoplay prevented:', e));
+
+        function closeModal() {
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
+
+            video.pause();
+            video.src = '';
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+
+            if (container) {
+                const previewVideo = container.querySelector('video');
+                if (previewVideo) {
+                    previewVideo.pause();
+                    previewVideo.currentTime = 0;
+                }
+            }
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        if (video.requestFullscreen) {
+            video.requestFullscreen().catch(e => console.log('Fullscreen error:', e));
+        }
+    }
+
+    document.querySelectorAll('#video-preview').forEach(videoContainer => {
+        videoContainer.addEventListener('click', function(e) {
+            if (!e.target.closest('.video-play-button')) {
+                const video = this.querySelector('video source');
+                if (video) {
+                    openFullscreenVideo(video.src, this.closest('.group'));
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.group video').forEach(video => {
+        const parent = video.closest('.group');
+
+        parent.addEventListener('mouseenter', () => {
+            video.play().catch(e => console.log('Autoplay prevented:', e));
+        });
+
+        parent.addEventListener('mouseleave', () => {
+            video.pause();
+            video.currentTime = 0;
+        });
+    });
+</script>
 {% endblock content %}

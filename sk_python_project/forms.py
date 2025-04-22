@@ -6,7 +6,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['text','image','is_private']
+        fields = ['text','image','video','is_private']
         labels = {'text':''}
 
     is_private = forms.BooleanField(required=False, initial=False, label="Make this topic private")
@@ -19,6 +19,20 @@ class TopicForm(forms.ModelForm):
             return image
         return None
 
+    def clean_video(self):
+        video = self.cleaned_data.get('video')
+        if video:
+            if video.size > 50 * 1024 * 1024:
+                raise forms.ValidationError('Video file size should be less than 50 MB')
+
+            ext = video.name.split('.')[-1].lower()
+            valid_extensions = ['mp4', 'mov', 'avi', 'webm']
+
+            if ext not in valid_extensions:
+                raise forms.ValidationError('Unsupported file extension. Supported formats: mp4, mov, avi, webm')
+
+            return video
+        return None
 
 class EntryForm(forms.ModelForm):
     class Meta:
